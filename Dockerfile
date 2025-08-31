@@ -26,6 +26,9 @@ RUN npm ci
 # Copy application code
 COPY . .
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Build the Next.js application with placeholder env vars for build time
 ARG NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-key
@@ -53,5 +56,5 @@ ENV PORT=8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/api/health || exit 1
 
-# Start the application
-CMD ["npm", "start"]
+# Start the application with startup script
+CMD ["./start.sh"]
