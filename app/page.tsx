@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { v4 as uuidv4 } from 'uuid'
 
 // Dynamically import Monaco Editor to avoid SSR issues
@@ -58,54 +57,41 @@ export default function Home() {
       return
     }
 
-    // Check if Supabase is configured
-    if (!isSupabaseConfigured()) {
-      alert('Database not configured. Please contact administrator.')
-      return
-    }
-
     setIsLoading(true)
 
     try {
-      // Check if user exists
-      let { data: existingUser, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('phone_number', cleanPhone)
-        .single()
+      // Call the login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber: cleanPhone }),
+      })
 
-      if (error && error.code !== 'PGRST116') {
-        throw error
-      }
+      const data = await response.json()
 
-      if (!existingUser) {
-        // Create new user
-        const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .insert([{ 
-            id: uuidv4(),
-            phone_number: cleanPhone 
-          }])
-          .select()
-          .single()
-
-        if (createError) throw createError
-        existingUser = newUser
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed')
       }
 
       // Save user to localStorage and state
-      localStorage.setItem('user', JSON.stringify(existingUser))
-      setUser(existingUser)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      setUser(data.user)
 
       // Create a new session
-      await supabase
-        .from('sessions')
-        .insert([{
-          id: sessionId,
-          user_id: existingUser.id,
+      await fetch('/api/sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          userId: data.user.id,
           language: 'python',
           code: ''
-        }])
+        }),
+      })
 
     } catch (error) {
       console.error('Login error:', error)

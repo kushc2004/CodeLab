@@ -29,9 +29,7 @@ COPY . .
 # Make start script executable
 RUN chmod +x start.sh
 
-# Build the Next.js application with placeholder env vars for build time
-ARG NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-key
+# Build the Next.js application
 RUN npm run build
 
 # Remove devDependencies to reduce image size

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import dynamic from 'next/dynamic'
 
 const CodeEditor = dynamic(() => import('@/components/CodeEditor'), {
@@ -36,26 +35,16 @@ export default function SharedSessionPage() {
   }, [sessionId, userAccepted])
 
   const loadSharedSession = async () => {
-    // Check if Supabase is configured
-    if (!isSupabaseConfigured()) {
-      setError('Database not configured. Please contact administrator.')
-      setIsLoading(false)
-      return
-    }
-
     try {
-      const { data, error } = await supabase
-        .from('sessions')
-        .select('*')
-        .eq('id', sessionId)
-        .single()
+      const response = await fetch(`/api/sessions?sessionId=${sessionId}`)
+      const data = await response.json()
 
-      if (error) {
-        setError('Session not found or access denied')
+      if (!response.ok) {
+        setError(data.error || 'Session not found or access denied')
         return
       }
 
-      setSession(data)
+      setSession(data.session)
     } catch (error) {
       setError('Failed to load shared session')
       console.error('Error loading shared session:', error)
