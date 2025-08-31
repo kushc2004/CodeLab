@@ -273,153 +273,301 @@ export default function CodeEditor({ userId, sessionId }: CodeEditorProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h2 className="text-lg font-semibold">Code Editor</h2>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => handleLanguageChange('python')}
-              className={`px-3 py-1 rounded ${
-                language === 'python' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              Python
-            </button>
-            <button
-              onClick={() => handleLanguageChange('cpp')}
-              className={`px-3 py-1 rounded ${
-                language === 'cpp' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              C++
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={handleShareSession}
-            className="button-secondary"
-          >
-            Share Session
-          </button>
-          <button
-            onClick={handleRunCode}
-            disabled={isRunning}
-            className="button-success disabled:opacity-50"
-          >
-            {isRunning ? 'Running...' : 'Run Code'}
-          </button>
-        </div>
-      </div>
-
-      {/* Keystroke Tracking Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <h3 className="text-sm font-medium text-blue-800 mb-2">🔬 Enhanced Keystroke Tracking</h3>
-        <p className="text-xs text-blue-700 mb-1">
-          <strong>New:</strong> Keystrokes are now collected in 100ms time windows instead of individual timestamps
-        </p>
-        <p className="text-xs text-blue-600">
-          Current window: <span className="font-mono font-semibold">{keystrokeStats.currentWindowKeystrokes}</span> keystrokes | 
-          Buffered: <span className="font-mono font-semibold">{keystrokeStats.bufferedWindows}</span> windows ready to save
-        </p>
-      </div>
-
-      {/* Share Message */}
-      {shareMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-          <p className="text-sm text-green-700">{shareMessage}</p>
-        </div>
-      )}
-
-      {/* Editor and Output Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Code Editor */}
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Code Editor</h3>
-            <div className="code-editor h-80">
-              <Editor
-                height="100%"
-                language={language === 'cpp' ? 'cpp' : 'python'}
-                value={code}
-                onChange={handleCodeChange}
-                onMount={handleEditorDidMount}
-                theme="vs-dark"
-                options={{
-                  fontSize: 14,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  tabSize: language === 'python' ? 4 : 2,
-                  insertSpaces: true,
-                  wordWrap: 'on',
-                }}
-              />
+      {/* Professional Header Controls */}
+      <div className="card p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Code Editor</h2>
+                <p className="text-sm text-gray-600">Write and execute your algorithms</p>
+              </div>
+            </div>
+            
+            <div className="language-selector">
+              <button
+                onClick={() => handleLanguageChange('python')}
+                className={`language-tab ${language === 'python' ? 'active' : 'inactive'}`}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Python
+              </button>
+              <button
+                onClick={() => handleLanguageChange('cpp')}
+                className={`language-tab ${language === 'cpp' ? 'active' : 'inactive'}`}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                C++
+              </button>
             </div>
           </div>
           
-          {/* Input Panel (especially useful for C++) */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
-              Program Input {language === 'cpp' && <span className="text-blue-600">(stdin for C++)</span>}
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleShareSession}
+              className="btn btn-secondary"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+              </svg>
+              Share
+            </button>
+            
+          </div>
+        </div>
+      </div>
+
+      {/* Compact Keystroke Tracking Panel */}
+      <div className="compact-tracking-panel">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-purple-100 rounded-md flex items-center justify-center mr-2">
+              <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium text-gray-900">Keystroke Analytics</span>
+          </div>
+          <div className="flex items-center space-x-4 text-xs">
+            <div className="flex items-center">
+              <span className="text-gray-600 mr-1">Current:</span>
+              <span className="font-semibold text-purple-600">{keystrokeStats.currentWindowKeystrokes}</span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-gray-600 mr-1">Buffered:</span>
+              <span className="font-semibold text-blue-600">{keystrokeStats.bufferedWindows}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Share Success Message */}
+      {shareMessage && (
+        <div className="success-banner">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm font-medium text-green-800">{shareMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Optimized Editor Layout */}
+      <div className="optimized-editor-layout">
+        {/* Left Side - Code Editor (Larger) */}
+        <div className="code-editor-section">
+          <div className="panel-header">
+            <h3 className="panel-title">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              Code Editor
             </h3>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={language === 'cpp' 
-                ? 'Enter input that your C++ program expects from stdin...' 
-                : 'Enter any input your program might need...'}
-              className="w-full h-20 p-2 border border-gray-300 rounded-md font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            <div className='flex items-center space-x-3'>
+            <div className="language-badge">
+              {language === 'python' ? (
+                <div className="flex items-center text-blue-700">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Python
+                </div>
+              ) : (
+                <div className="flex items-center text-purple-700">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                  C++
+                </div>
+              )}
+              
+            </div>
+            <button
+              onClick={handleRunCode}
+              disabled={isRunning}
+              className="btn btn-primary flex items-center"
+            >
+              {isRunning ? (
+                <>
+                  <svg className="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Running...
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9 0a9 9 0 118 0M4 12V8a8 8 0 0116 0v4" />
+                  </svg>
+                  Run Code
+                </>
+              )}
+            </button>
+            </div>
+            
+          </div>
+          
+          <div className="large-editor-container">
+            <Editor
+              height="600px"
+              language={language === 'cpp' ? 'cpp' : 'python'}
+              value={code}
+              onChange={handleCodeChange}
+              onMount={handleEditorDidMount}
+              theme="vs-dark"
+              options={{
+                fontSize: 14,
+                fontFamily: "'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace",
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                tabSize: language === 'python' ? 4 : 2,
+                insertSpaces: true,
+                wordWrap: 'on',
+                lineNumbers: 'on',
+                roundedSelection: false,
+                scrollbar: {
+                  vertical: 'auto',
+                  horizontal: 'auto',
+                },
+                padding: { top: 16, bottom: 16 },
+              }}
             />
           </div>
         </div>
 
-        {/* Output Panel */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-700">Output</h3>
-          {language === 'cpp' && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <p className="text-xs text-green-700">
-                🔧 <strong>Real C++ Compilation:</strong> Your code is compiled with g++ and executed with actual binary output!
-              </p>
+        {/* Right Side - Input/Output Split */}
+        <div className="side-panel-section">
+          {/* Input Section (Top Half) */}
+          <div className="input-panel">
+            <div className="panel-header">
+              <h4 className="panel-title">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3" />
+                </svg>
+                Program Input
+                {language === 'cpp' && <span className="text-purple-600 ml-2">(stdin)</span>}
+              </h4>
             </div>
-          )}
-          {language === 'python' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-xs text-blue-700">
-                🐍 <strong>Real Python Execution:</strong> Your code runs on the actual Python interpreter (python3)!
-              </p>
+            <div className="input-content">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={language === 'cpp' 
+                  ? 'Enter input that your C++ program expects from stdin...' 
+                  : 'Enter any input your program might need...'}
+                className="side-input-textarea"
+              />
             </div>
-          )}
-          <div className="output-panel h-96 p-4 overflow-auto">
-            <pre className="whitespace-pre-wrap text-sm text-gray-800">
-              {output || 'Click "Run Code" to see output here...'}
-            </pre>
+            
+            {/* Language Info Banner */}
+            {language === 'cpp' && (
+              <div className="execution-banner cpp-banner mb-0">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-xs font-medium text-purple-800">Real C++ Compilation</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {language === 'python' && (
+              <div className="execution-banner python-banner mb-0">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <div>
+                    <p className="text-xs font-medium text-blue-800">Real Python Execution</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Output Section (Bottom Half) */}
+          <div className="output-panel">
+            <div className="panel-header">
+              <h3 className="panel-title">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Output
+              </h3>
+              <div className="execution-status">
+                {isRunning ? (
+                  <div className="status-indicator status-running">
+                    <div className="animate-pulse w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                    Executing
+                  </div>
+                ) : (
+                  <div className="status-indicator status-ready">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    Ready
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="side-output-container">
+              <pre className="side-output-content">
+                {output || (
+                  <span className="output-placeholder">
+                    Click "Run Code" to see output here...
+                    <br />
+                    <span className="text-xs text-gray-500">
+                      Your code execution results will appear in this panel
+                    </span>
+                  </span>
+                )}
+              </pre>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Status Bar */}
-      <div className="flex items-center justify-between text-xs text-gray-500 bg-gray-100 px-4 py-2 rounded">
-        <span>
-          Language: {language.toUpperCase()}
+      {/* Professional Status Bar */}
+      <div className="status-bar">
+        <div className="status-section">
+          <span className="status-label">Language:</span>
+          <span className="status-value">{language.toUpperCase()}</span>
           {language === 'python' && (
-            <span className={`ml-2 ${pyodideReady ? 'text-green-600' : 'text-orange-600'}`}>
-              ({pyodideReady ? 'Python Ready' : 'Python Loading'})
+            <span className={`status-indicator ml-2 ${pyodideReady ? 'text-green-600' : 'text-orange-600'}`}>
+              ({pyodideReady ? 'Ready' : 'Loading'})
             </span>
           )}
-        </span>
-        <span>
-          Keystroke Tracking: {keystrokeStats.currentWindowKeystrokes} keys in current 100ms window
-          {keystrokeStats.bufferedWindows > 0 && ` | ${keystrokeStats.bufferedWindows} windows buffered`}
-        </span>
-        <span>Auto-save enabled</span>
-        <span>Session: {sessionId.slice(0, 8)}...</span>
+        </div>
+        
+        <div className="status-section">
+          <span className="status-label">Tracking:</span>
+          <span className="status-value">{keystrokeStats.currentWindowKeystrokes} keys</span>
+          {keystrokeStats.bufferedWindows > 0 && (
+            <span className="status-indicator text-blue-600 ml-1">
+              | {keystrokeStats.bufferedWindows} buffered
+            </span>
+          )}
+        </div>
+        
+        <div className="status-section">
+          <span className="status-label">Auto-save:</span>
+          <span className="status-value text-green-600">Enabled</span>
+        </div>
+        
+        <div className="status-section">
+          <span className="status-label">Session:</span>
+          <span className="status-value font-mono">{sessionId.slice(0, 8)}...</span>
+        </div>
       </div>
     </div>
   )
