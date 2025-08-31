@@ -27,55 +27,6 @@ export { checkCompilerAvailability, checkPythonAvailability }
 
 // Clean up - Remove old simulation functions that are no longer needed
 
-// Default code templates
-export const codeTemplates = {
-  cpp: `#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!" << endl;
-    
-    // Example: Working with vectors
-    vector<int> nums = {5, 2, 8, 1, 9};
-    sort(nums.begin(), nums.end());
-    
-    cout << "Sorted numbers: ";
-    for (int num : nums) {
-        cout << num << " ";
-    }
-    cout << endl;
-    
-    // Example: Reading input
-    // Uncomment lines below to test input:
-    // int n;
-    // cout << "Enter a number: ";
-    // cin >> n;
-    // cout << "You entered: " << n << endl;
-    
-    return 0;
-}`,
-  python: `print("Hello, World!")
-
-# Example: Working with lists
-numbers = [5, 2, 8, 1, 9]
-numbers.sort()
-print("Sorted numbers:", numbers)
-
-# Example: Simple loop
-for i in range(5):
-    print(f"Count: {i}")
-
-# Example: Reading input
-# Uncomment lines below to test input:
-# name = input("Enter your name: ")
-# print(f"Hello, {name}!")
-
-# Write your code here
-`
-}
-
 // C++ simulation with support for competitive programming constructs
 async function executeCpp(code: string): Promise<ExecutionResult> {
   const startTime = Date.now()
@@ -94,12 +45,6 @@ async function executeCpp(code: string): Promise<ExecutionResult> {
                               code.includes('#include <vector>') || 
                               code.includes('#include <algorithm>')
     
-    // Enhanced competitive programming algorithm detection and simulation
-    const result = await simulateCompetitiveProgrammingAlgorithm(code, startTime)
-    if (result) {
-      return result
-    }
-
     // Enhanced C++ simulation for simpler code
     const variables: { [key: string]: any } = {}
     const arrays: { [key: string]: any[] } = {}
