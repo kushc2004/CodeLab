@@ -1,7 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Debug environment variables
+console.log('🔍 Environment Debug:')
+console.log('NODE_ENV:', process.env.NODE_ENV)
+console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY length:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length)
+console.log('All env vars starting with NEXT_PUBLIC:', Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC')))
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+console.log('🔍 Final values:')
+console.log('supabaseUrl:', supabaseUrl)
+console.log('supabaseAnonKey length:', supabaseAnonKey.length)
 
 // Create client with placeholder values for build time
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
