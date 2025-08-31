@@ -26,7 +26,9 @@ RUN npm ci
 # Copy application code
 COPY . .
 
-# Build the Next.js application
+# Build the Next.js application with placeholder env vars for build time
+ARG NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-key
 RUN npm run build
 
 # Remove devDependencies to reduce image size

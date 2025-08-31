@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { v4 as uuidv4 } from 'uuid'
 
 // Dynamically import Monaco Editor to avoid SSR issues
@@ -55,6 +55,12 @@ export default function Home() {
     const cleanPhone = phoneNumber.replace(/[^\d]/g, '')
     if (cleanPhone.length < 10) {
       alert('Please enter a valid phone number')
+      return
+    }
+
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      alert('Database not configured. Please contact administrator.')
       return
     }
 

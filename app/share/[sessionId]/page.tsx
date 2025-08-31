@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import dynamic from 'next/dynamic'
 
 const CodeEditor = dynamic(() => import('@/components/CodeEditor'), {
@@ -36,6 +36,13 @@ export default function SharedSessionPage() {
   }, [sessionId, userAccepted])
 
   const loadSharedSession = async () => {
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      setError('Database not configured. Please contact administrator.')
+      setIsLoading(false)
+      return
+    }
+
     try {
       const { data, error } = await supabase
         .from('sessions')
