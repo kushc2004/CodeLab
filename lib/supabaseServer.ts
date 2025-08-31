@@ -1,15 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Server-side Supabase client - uses runtime environment variables
-// These will work with Cloud Run environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// Lazy initialization - only create client when needed (at runtime)
+let supabaseServerClient: any = null
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+export function getSupabaseServer() {
+  if (!supabaseServerClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables')
+    }
+
+    supabaseServerClient = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  
+  return supabaseServerClient
 }
-
-export const supabaseServer = createClient(supabaseUrl, supabaseAnonKey)
 
 export interface User {
   id: string

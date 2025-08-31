@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseServer } from '@/lib/supabaseServer'
+import { getSupabaseServer } from '@/lib/supabaseServer'
 
 export async function POST(request: NextRequest) {
   try {
     const { sessionId, userId, language, code } = await request.json()
 
-    const { data, error } = await supabaseServer
+    const supabase = getSupabaseServer()
+    const { data, error } = await supabase
       .from('sessions')
       .insert([{
         id: sessionId,
@@ -35,7 +36,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 })
     }
 
-    const { data, error } = await supabaseServer
+    const supabase = getSupabaseServer()
+    const { data, error } = await supabase
       .from('sessions')
       .select('*')
       .eq('id', sessionId)

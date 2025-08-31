@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseServer } from '@/lib/supabaseServer'
+import { getSupabaseServer } from '@/lib/supabaseServer'
 import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: NextRequest) {
@@ -16,8 +16,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 })
     }
 
+    // Get Supabase client (initialized at runtime)
+    const supabase = getSupabaseServer()
+
     // Check if user exists
-    const { data: existingUser, error } = await supabaseServer
+    const { data: existingUser, error } = await supabase
       .from('users')
       .select('*')
       .eq('phone_number', cleanPhone)
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     if (!existingUser) {
       // Create new user
-      const { data: newUser, error: createError } = await supabaseServer
+      const { data: newUser, error: createError } = await supabase
         .from('users')
         .insert([{ 
           id: uuidv4(),
