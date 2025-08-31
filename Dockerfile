@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Verify installations
@@ -19,14 +20,17 @@ RUN g++ --version && python3 --version
 # Copy package files
 COPY package*.json ./
 
-# Install Node.js dependencies
-RUN npm ci --only=production
+# Install Node.js dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy application code
 COPY . .
 
 # Build the Next.js application
 RUN npm run build
+
+# Remove devDependencies to reduce image size
+RUN npm prune --production
 
 # Create non-root user for security
 RUN useradd -r -g daemon -u 1001 nextjs && \
