@@ -1,0 +1,19 @@
+# Docker ignore file to reduce build context size
+node_modules
+npm-debug.log
+.next
+.git
+.gitignore
+README.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+.env.local
+.env.*.local
+coverage
+.nyc_output
+.DS_Store
+*.log
+test-*.html
+test-*.mjs
+*.md
