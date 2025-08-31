@@ -42,15 +42,16 @@ RUN useradd -r -g daemon -u 1001 nextjs && \
 USER nextjs
 
 # Expose port (Cloud Run will set PORT environment variable)
-EXPOSE 3000
+EXPOSE 8080
 
 # Set environment variables
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/api/health || exit 1
+    CMD curl -f http://localhost:8080/api/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]

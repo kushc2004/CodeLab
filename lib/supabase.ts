@@ -8,19 +8,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Helper function to check if Supabase is properly configured
 export const isSupabaseConfigured = () => {
-  const isConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && 
+  return supabaseUrl !== 'https://placeholder.supabase.co' && 
          supabaseAnonKey !== 'placeholder-key' &&
          supabaseUrl.length > 0 &&
          supabaseAnonKey.length > 0
-  
-  // Debug logging (remove in production)
-  console.log('Supabase Config Check:', {
-    supabaseUrl: supabaseUrl.substring(0, 30) + '...', // Only show first 30 chars for security
-    supabaseAnonKey: supabaseAnonKey.substring(0, 30) + '...', // Only show first 30 chars for security
-    isConfigured
-  })
-  
-  return isConfigured
 }
 
 export interface User {
